@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./RangeVerifier.sol";
 
-contract Starter is Ownable {
+contract VendingMachine is Ownable {
   Verifier public rangeVerifier;
 
   uint256 public locationHash;
@@ -15,8 +15,10 @@ contract Starter is Ownable {
 
   event Transaction(bool _status, address _sender);
 
-  constructor() {
+  constructor(uint256 _locationHash, uint256 _overtakeFee) {
     rangeVerifier = new Verifier();
+    locationHash = _locationHash;
+    overtakeFee = _overtakeFee;
   }
 
   // Transact
