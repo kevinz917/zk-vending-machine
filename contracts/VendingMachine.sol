@@ -8,35 +8,35 @@ import "./RangeVerifier.sol";
 contract VendingMachine is Ownable {
   Verifier public rangeVerifier;
 
-  uint256 public locationHash;
-  address public destination;
-  address public shopOwner;
-  uint256 public overtakeFee;
+  mapping(uint256 => address) public destinations;
+  mapping(uint256 => address) public shopOwners;
+  mapping(uint256 => uint256) public overtakeFees;
 
   event Transaction(bool _status, address _sender);
 
-  constructor(uint256 _locationHash, uint256 _overtakeFee) {
+  constructor(uint256[] memory _locationHashs, uint256[] memory _overtakeFees) {
     rangeVerifier = new Verifier();
-    locationHash = _locationHash;
-    overtakeFee = _overtakeFee;
+    for (uint256 i = 0; i < _locationHashs.length; i++) {
+      overtakeFees[_locationHashs[0]] = _overtakeFees[i];
+    }
   }
 
   // Transact
   // any user can use this
   // TODO: Add mock token. Add ZK proof
-  function transact() public payable {
+  function transact(uint256 _locationHash) public payable {
     // bytes memory _initializationCalldata = abi.encodeWithSignature("initialize(uint256)", msg.sender, _num);
-    (bool success, bytes memory data) = destination.call{ value: msg.value }(abi.encodeWithSignature("interact()"));
+    (bool success, bytes memory data) = destinations[_locationHash].call{ value: msg.value }(abi.encodeWithSignature("interact()"));
 
     emit Transaction(success, msg.sender);
   }
 
   // Overtake vending machine
   // User becomes shopOwner and is allowed to install new "shops"
-  function overtake() public payable {
-    require(msg.value > overtakeFee, "Need more stake amount");
-    overtakeFee = msg.value;
-    shopOwner = msg.sender;
+  function overtake(uint256 _locationHash) public payable {
+    require(msg.value > overtakeFees[_locationHash], "Need more stake amount");
+    overtakeFees[_locationHash] = msg.value;
+    shopOwners[_locationHash] = msg.sender;
   }
 
   // Install new vending machine
@@ -47,13 +47,13 @@ contract VendingMachine is Ownable {
     uint256[2] memory _c,
     uint256[2] memory _input,
     address _destination
-  ) public onlyShopOwner onlyInPosition(_a, _b, _c, _input) {
-    destination = _destination;
+  ) public onlyShopOwner(_input[0]) onlyInPosition(_a, _b, _c, _input) {
+    destinations[_input[0]] = _destination;
   }
 
   // Modifiers
-  modifier onlyShopOwner() {
-    require(shopOwner == msg.sender, "Not owner");
+  modifier onlyShopOwner(uint256 _locationHash) {
+    require(shopOwners[_locationHash] == msg.sender, "Not owner");
     _;
   }
 
