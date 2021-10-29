@@ -76,5 +76,6 @@ describe("ZK Vending Machine", () => {
     await shop2Contract.interact(addr1.address, { value: 2 });
     expect(await shop2Contract.balanceOf(addr1.address)).to.be.equal(1);
     expect(await shop2Contract.ownerOf(0)).to.be.equal(addr1.address);
+    expect(await shop2Contract.tokenURI(0)).to.be.equal(NFT_URL);
   });
 });
