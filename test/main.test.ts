@@ -22,7 +22,7 @@ describe("ZK Vending Machine", () => {
   });
 
   it("Overtake shop", async () => {
-    await zkvmContract.overtake(machineLocationHash, { value: 10 });
+    await zkvmContract.overtake(...sampleRangeProof, { value: 10 });
     expect(await zkvmContract.shopOwners(machineLocationHash)).to.be.equal(addr1.address);
     expect(await zkvmContract.overtakeFees(machineLocationHash)).to.be.equal(10);
   });
@@ -31,12 +31,20 @@ describe("ZK Vending Machine", () => {
     await zkvmContract.install(...sampleRangeProof, sampleShop1Contract.address);
     expect(await zkvmContract.destinations(machineLocationHash)).to.be.equal(sampleShop1Contract.address);
   });
-});
 
-// examples
-// await nftContract.mint(...initMintProofsArgs);
-// expect(nftContract.mint(...initMintWrongProofArgs)).to.be.revertedWith(revertMessages.INVALID_PROOF);
-// expect(await nftContract.balanceOf(addr1.address)).to.be.equal(1); // mint NFT
-// const character = await nftContract.characters(0);
-// expect(character.cHash).equal(initMintProofsArgs[3][0]);
-// expect(character.isRevealed).equal(false);
+  it("Transact with new shop", async () => {
+    await zkvmContract.transact(...sampleRangeProof);
+    expect(await sampleShop1Contract.reputations(addr1.address)).to.be.equal(1);
+  });
+
+  it("Overtake shop", async () => {
+    await zkvmContract.connect(addr2).overtake(...sampleRangeProof, { value: 20 });
+    expect(await zkvmContract.shopOwners(machineLocationHash)).to.be.equal(addr2.address);
+    expect(await zkvmContract.overtakeFees(machineLocationHash)).to.be.equal(20);
+  });
+
+  it("Transact with overtaken shop", async () => {
+    await zkvmContract.connect(addr2).transact(...sampleRangeProof);
+    expect(await sampleShop1Contract.reputations(addr2.address)).to.be.equal(1);
+  });
+});

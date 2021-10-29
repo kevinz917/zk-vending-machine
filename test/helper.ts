@@ -1,5 +1,8 @@
 export enum revertMessages {
   INVALID_PROOF = "Proof is not valid",
+  INVALID_OWNER = "Not shop owner",
+  INVALID_RANGE = "Not in range",
+  INVALID_STAKE = "Need more stake amount",
 }
 
 export const sampleRangeProof = [
