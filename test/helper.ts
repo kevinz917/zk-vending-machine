@@ -5,6 +5,7 @@ export enum REVERT_MESSAGES {
   INVALID_STAKE = "Need more stake amount",
   EMPTY_BALANCE = "Balance is empty",
   OVERFLOW_TOKEN_SUPPLY = "Over supply limit",
+  INSUFFICIENT_FUND = "Insufficient fund",
 }
 
 export const sampleRangeProof = [
