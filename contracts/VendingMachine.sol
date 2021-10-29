@@ -25,7 +25,6 @@ contract VendingMachine is Ownable {
 
   // Transact
   // user can transact with shop if within range defined by zkSNARK
-  // TODO: Add mock token
   function transact(
     uint256[2] memory _a,
     uint256[2][2] memory _b,
@@ -47,6 +46,7 @@ contract VendingMachine is Ownable {
   ) public payable onlyInPosition(_a, _b, _c, _input) {
     uint256 _locationHash = _input[0];
     require(msg.value > overtakeFees[_locationHash], "Need more stake amount");
+    balances[shopOwners[_locationHash]] += overtakeFees[_locationHash]; // return previous take amount to previous owner, similar to bidding
     overtakeFees[_locationHash] = msg.value;
     shopOwners[_locationHash] = msg.sender;
   }
