@@ -14,4 +14,12 @@ Moments later, fellow space cowboy Charlie also comes across this coordinate and
 
 This is possible because all the vending machines will share the same programming interface, allowing users to "install" new shops by plugging in new contract addresses! Under the hood, it's points at different contracts and executes the call with some given calldata, governed by the current owner.
 
+# Instructions
+
+To generate seed data, run this in root
+
+```
+npx hardhat run scripts/seed.ts
+```
+
 Please follow me [here](https://twitter.com/kzdagoof) and reach out [here](https://thekevinz.com/) to jam on ideas!
